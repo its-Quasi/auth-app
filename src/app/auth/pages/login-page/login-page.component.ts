@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login-page',
@@ -8,15 +9,15 @@ import { FormBuilder, Validators } from '@angular/forms';
 })
 export class LoginPageComponent {
 
-
+  private authService = inject(AuthService)
   private formBuilder = inject(FormBuilder)
 
   form = this.formBuilder.group({
-    email : [
+    email: [
       '',
       [Validators.required, Validators.email]
     ],
-    password : [
+    password: [
       '',
       [Validators.required, Validators.minLength(6)]
     ]
@@ -24,6 +25,9 @@ export class LoginPageComponent {
 
 
   login() {
-    console.log(this.form.value)
+    const { email, password } = this.form.value
+
+    this.authService.login(email || '', password||'')
+    .subscribe( success => console.log(success))
   }
 }
