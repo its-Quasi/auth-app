@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import Swal from 'sweetalert2'
+
 
 @Component({
   selector: 'app-login-page',
@@ -14,7 +16,7 @@ export class LoginPageComponent {
 
   form = this.formBuilder.group({
     email: [
-      '',
+      'maasdfr@gmail.com',
       [Validators.required, Validators.email]
     ],
     password: [
@@ -25,9 +27,19 @@ export class LoginPageComponent {
 
 
   login() {
-    const { email, password } = this.form.value
+    if (this.form.invalid) return
+    const { email, password } = this.form.value;
 
-    this.authService.login(email || '', password||'')
-    .subscribe( success => console.log(success))
+    this.authService.login(email || '', password || '')
+      .subscribe({
+        next: () => console.log('ahi miramos'),
+        error: (error) => {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: error
+          });
+        }
+      })
   }
 }
