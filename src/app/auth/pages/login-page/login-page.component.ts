@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2'
 
 
@@ -11,8 +12,10 @@ import Swal from 'sweetalert2'
 })
 export class LoginPageComponent {
 
+  //Dependencies and services
   private authService = inject(AuthService)
   private formBuilder = inject(FormBuilder)
+  private router = inject(Router)
 
   form = this.formBuilder.group({
     email: [
@@ -20,7 +23,7 @@ export class LoginPageComponent {
       [Validators.required, Validators.email]
     ],
     password: [
-      '',
+      'csdcsacsda',
       [Validators.required, Validators.minLength(6)]
     ]
   })
@@ -29,16 +32,12 @@ export class LoginPageComponent {
   login() {
     if (this.form.invalid) return
     const { email, password } = this.form.value;
-
+    console.log(email, password)
     this.authService.login(email || '', password || '')
       .subscribe({
-        next: () => console.log('ahi miramos'),
+        next: () => this.router.navigateByUrl('/dashboard'),
         error: (error) => {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: error
-          });
+          Swal.fire({ icon: "error", title: "Oops...", text: error });
         }
       })
   }
