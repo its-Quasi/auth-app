@@ -8,11 +8,16 @@ import { User, AuthStatus, LoginResponse } from '../interfaces';
   providedIn: 'root'
 })
 export class AuthService {
+  
+  constructor(){
+    this.checkStatus().subscribe()
+  }
+
   private http = inject(HttpClient)
   private readonly baseUrl = environment.url
 
   public currentUser = signal<User | null>(null)
-  public authState = signal<AuthStatus>(AuthStatus.CHEKING)
+  public authState = signal<AuthStatus>(AuthStatus.NOT_AUTHENTICATED)
 
   private setAuthentication(user: User, token: string) {
     this.currentUser.set(user)
@@ -35,6 +40,12 @@ export class AuthService {
       }),
       catchError(err => throwError(() => err.error.message))
     )
+  }
+
+  logout() {
+    localStorage.removeItem('token')
+    this.currentUser.set(null)
+    this.authState.set(AuthStatus.NOT_AUTHENTICATED)
   }
 
   checkStatus(): Observable<boolean> {
